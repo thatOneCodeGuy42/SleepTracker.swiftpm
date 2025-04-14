@@ -2,11 +2,19 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        ZStack {
+            Color(red: 0.051, green: 0.106, blue: 0.165)
+                .ignoresSafeArea()
+            VStack {
+                RoundedRectangle(cornerRadius: 15)
+                    .frame(width: 350, height: 100)
+                    .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
+                    .overlay {
+                        Text("Sleep Tracker")
+                            .font(.custom("American Typewriter", size: 50))
+                            .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
+                    }
+            }
         }
     }
 }
