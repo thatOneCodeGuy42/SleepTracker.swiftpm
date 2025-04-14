@@ -27,6 +27,7 @@ struct ContentView: View {
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
                 }
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                 Button {
                     print("button works")
                 } label: {
@@ -39,6 +40,7 @@ struct ContentView: View {
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
                 }
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                 Button {
                     print("button works")
                 } label: {
@@ -51,6 +53,7 @@ struct ContentView: View {
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
                 }
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
                 Button {
                     print("button works")
                 } label: {
