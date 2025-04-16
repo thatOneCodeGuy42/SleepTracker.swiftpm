@@ -60,6 +60,7 @@ struct SleepTrendView: View {
                                 .font(.custom("American Typewriter", size: 50))
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
+                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 60, trailing: 0))
                     
                     Chart {
                         ForEach(sleepData) { data in
