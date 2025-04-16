@@ -48,13 +48,19 @@ struct SleepTrendView: View {
 
     var body: some View {
         ZStack {
+            Color(red: 0.051, green: 0.106, blue: 0.165)
+                .ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 20) {
-                    Text("Sleep Trend")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.top)
-
+                    RoundedRectangle(cornerRadius: 15)
+                        .frame(width: 350, height: 100)
+                        .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
+                        .overlay {
+                            Text("Sleep Trend")
+                                .font(.custom("American Typewriter", size: 50))
+                                .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
+                        }
+                    
                     Chart {
                         ForEach(sleepData) { data in
                             BarMark(
@@ -76,16 +82,19 @@ struct SleepTrendView: View {
                     .frame(height: 300)
                     .padding()
 
-                    Button("More Info") {
+                    Button {
                         showInfo = true
+                    } label: {
+                        RoundedRectangle(cornerRadius: 5)
+                            .frame(width: 100, height: 30)
+                            .foregroundStyle(Color(red: 0.424, green: 0.478, blue: 0.537))
+                            .overlay {
+                                Text("More Info")
+                                    .foregroundStyle(Color(red: 0.788, green: 0.839, blue: 0.875))
+                            }
                     }
-                    .buttonStyle(.bordered)
+                    .padding(EdgeInsets(top: 100, leading: 0, bottom: 0, trailing: 0))
 
-                    Button("Back to Home") {
-                        dismiss()
-                    }
-                    .padding(.bottom)
-                    .buttonStyle(.borderedProminent)
                 }
                 .padding()
             }
@@ -111,12 +120,19 @@ struct SleepTrendView: View {
 
                     Text("🔴 The red dashed line on the chart shows the ideal goal of 8 hours of sleep.")
 
-                    Button("Close") {
+                    Button {
                         showInfo = false
+                    } label: {
+                        RoundedRectangle(cornerRadius: 5)
+                            .frame(width: 65, height: 30)
+                            .foregroundStyle(Color(red: 0.424, green: 0.478, blue: 0.537))
+                            .padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
+                            .overlay {
+                                Text("Close")
+                                    .foregroundStyle(Color(red: 0.788, green: 0.839, blue: 0.875))
+                                    .padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
+                            }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 10)
-                    .buttonStyle(.borderedProminent)
                 }
                 .padding()
                 .frame(maxWidth: 300)
