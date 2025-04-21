@@ -16,9 +16,7 @@ struct ContentView: View {
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 300, trailing: 0))
-                    Button {
-                        print("button works")
-                    } label: {
+                    NavigationLink(destination: SleepLog()) {
                         RoundedRectangle(cornerRadius: 15)
                             .frame(width: 225, height: 50)
                             .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
