@@ -14,6 +14,14 @@ struct SleepLog: View {
                             .font(.custom("American Typewriter", size: 50))
                             .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                     }
+                    .padding(EdgeInsets(top: 0, leading: 0, bottom: 50, trailing: 0))
+                List {
+                    ForEach(1...13, id: \.self) { number in
+                        Text("\(number)")
+                    }
+                }
+                .frame(height: 400)
+                .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
                 NavigationLink(destination: CombinedSleepTrackerView()) {
                     RoundedRectangle(cornerRadius: 15)
                         .frame(width: 120, height: 40)
@@ -23,8 +31,8 @@ struct SleepLog: View {
                                 .font(.custom("American Typewriter", size: 20))
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
-                        .padding(EdgeInsets(top: 600, leading: 0, bottom: 0, trailing: 0))
                 }
+                .padding(EdgeInsets(top: 100, leading: 0, bottom: 0, trailing: 0))
             }
         }
     }
