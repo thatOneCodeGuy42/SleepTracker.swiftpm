@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct CombinedSleepTrackerView: View {
+    
+    @ObservedObject var viewModel: SleepLog.SleepLogViewModel
+
     @State var nameInput = ""
     @State var notesInput = ""
     @State var showStartPicker = false
@@ -94,6 +97,7 @@ struct CombinedSleepTrackerView: View {
                         .cornerRadius(10)
 
                         Button("Confirm") {
+                            viewModel.addEntry(name: nameInput, notes: notesInput, start: startDate, end: endDate)
                             clearInputs()
                         }
                         .frame(maxWidth: .infinity)
@@ -174,4 +178,3 @@ struct CombinedSleepTrackerView: View {
         }
     }
 }
-
