@@ -16,13 +16,14 @@ struct SleepLog: View {
                     }
                 NavigationLink(destination: CombinedSleepTrackerView()) {
                     RoundedRectangle(cornerRadius: 15)
-                        .frame(width: 225, height: 50)
+                        .frame(width: 120, height: 40)
                         .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
                         .overlay {
                             Text("AddNight")
-                                .font(.custom("American Typewriter", size: 30))
+                                .font(.custom("American Typewriter", size: 20))
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
+                        .padding(EdgeInsets(top: 600, leading: 0, bottom: 0, trailing: 0))
                 }
             }
         }
