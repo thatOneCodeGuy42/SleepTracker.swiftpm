@@ -92,16 +92,14 @@ struct CombinedSleepTrackerView: View {
                         .background(Color.red.opacity(0.8))
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                        NavigationLink(destination: SleepLog()) {
-                            Button("Confirm") {
-                                clearInputs()
-                            }
+                        Button("Confirm"){
+                            clearInputs()
+                        }
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
-                        }
                     }
                     Divider().padding(.vertical)
 
