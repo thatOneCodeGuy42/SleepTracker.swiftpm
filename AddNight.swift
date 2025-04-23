@@ -1,10 +1,3 @@
-//
-//  AddNight.swift
-//  SleepTracker
-//
-//  Created by Abhi Sorathiya on 4/16/25.
-//
-
 import SwiftUI
 
 struct CombinedSleepTrackerView: View {
@@ -19,10 +12,17 @@ struct CombinedSleepTrackerView: View {
     @Environment(\.presentationMode) var presentationMode
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+    @State var selectedDate: Date = Date()
 
     let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
+        return formatter
+    }()
+
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
         return formatter
     }()
 
@@ -40,6 +40,24 @@ struct CombinedSleepTrackerView: View {
                         TextField("Name", text: $nameInput)
                     }
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+
+                    HStack {
+                        Image(systemName: "calendar")
+                        Button(action: { showDatePicker = true }) {
+                            HStack {
+                                Text(dateFormatter.string(from: selectedDate))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.down")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.vertical, 8)
+                            .padding(.horizontal)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(8)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
 
                     HStack {
                         Image(systemName: "bed.double.fill")
@@ -129,6 +147,25 @@ struct CombinedSleepTrackerView: View {
                 .padding()
                 .navigationTitle("Sleep Tracker")
             }
+            .sheet(isPresented: $showDatePicker) {
+                VStack(spacing: 0) {
+                    HStack {
+                        Spacer()
+                        Button("Done") { showDatePicker = false }
+                            .padding()
+                    }
+                    DatePicker(
+                        "Select Date",
+                        selection: $selectedDate,
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(maxHeight: 200)
+                    Spacer()
+                }
+                .presentationDetents([.height(300)])
+            }
             .sheet(isPresented: $showStartPicker) {
                 VStack(spacing: 0) {
                     HStack {
@@ -173,6 +210,7 @@ struct CombinedSleepTrackerView: View {
     func clearInputs() {
         nameInput = ""
         notesInput = ""
+        selectedDate = Date()
         if let startOfDay = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date()) {
             startDate = startOfDay
         }
