@@ -9,6 +9,7 @@ struct CombinedSleepTrackerView: View {
     @State var showStartPicker = false
     @State var showEndPicker = false
     @State var navigate = false
+    @State var showDatePicker = false
     @Environment(\.presentationMode) var presentationMode
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
@@ -108,6 +109,7 @@ struct CombinedSleepTrackerView: View {
                     HStack(spacing: 16) {
                         Button("Delete") {
                             clearInputs()
+                            self.presentationMode.wrappedValue.dismiss()
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
