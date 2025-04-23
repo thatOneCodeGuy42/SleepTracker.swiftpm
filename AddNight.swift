@@ -12,7 +12,7 @@ struct CombinedSleepTrackerView: View {
     @State var notesInput = ""
     @State var showStartPicker = false
     @State var showEndPicker = false
-
+    @State var navigate = false
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
 
@@ -92,16 +92,17 @@ struct CombinedSleepTrackerView: View {
                         .background(Color.red.opacity(0.8))
                         .foregroundColor(.white)
                         .cornerRadius(10)
-                        NavigationLink(destination: SleepLog()) {
-                            Button("Confirm") {
+                        
+                        Button("Confirm") {
                                 clearInputs()
+                                navigate = true
+                                
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
                             .background(Color.blue)
                             .foregroundColor(.white)
                             .cornerRadius(10)
-                        }
                     }
                     Divider().padding(.vertical)
 
