@@ -29,13 +29,30 @@ struct SleepLog: View {
         case mostHours
         case leastHours
     }
-
+//    
+//    var sortedNights: [nights] {
+//        switch SortingOption {
+//        case .alphabeticalAZ:
+//            return
+//        case .alphabeticalZA:
+//            return
+//        case .dateNewOld:
+//            return
+//        case .dateOldNew:
+//            return
+//        case .mostHours:
+//            return
+//        case .leastHours:
+//            return
+//        }
+//    }
+//    
     var body: some View {
         NavigationView {
             ZStack {
                 Color(red: 0.051, green: 0.106, blue: 0.165)
                     .ignoresSafeArea()
-
+                
                 VStack(spacing: 20) {
                     RoundedRectangle(cornerRadius: 15)
                         .frame(width: 350, height: 100)
@@ -45,7 +62,7 @@ struct SleepLog: View {
                                 .font(.custom("American Typewriter", size: 50))
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
-
+                    
                     NavigationLink(destination: CombinedSleepTrackerView(viewModel: viewModel)) {
                         RoundedRectangle(cornerRadius: 15)
                             .frame(width: 225, height: 50)
@@ -56,7 +73,7 @@ struct SleepLog: View {
                                     .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                             }
                     }
-
+                    
                     List(viewModel.entries) { entry in
                         Button {
                             selectedEntry = entry
@@ -73,7 +90,7 @@ struct SleepLog: View {
                     .listStyle(PlainListStyle())
                     .background(Color.clear)
                 }
-
+                
                 if let entry = selectedEntry, showPopup {
                     ZStack {
                         Color.black.opacity(0.4)
@@ -83,7 +100,7 @@ struct SleepLog: View {
                                     showPopup = false
                                 }
                             }
-
+                        
                         VStack(spacing: 16) {
                             Text("🛏️ \(entry.name)")
                                 .font(.title)
@@ -94,7 +111,7 @@ struct SleepLog: View {
                                 Text("📝 Notes: \(entry.notes)")
                                     .italic()
                             }
-
+                            
                             Button("Close") {
                                 withAnimation {
                                     showPopup = false
@@ -117,16 +134,16 @@ struct SleepLog: View {
             .navigationBarHidden(true)
         }
     }
-
+    
     func formatted(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         return formatter.string(from: date)
     }
-
+    
     class SleepLogViewModel: ObservableObject {
         @Published var entries: [SleepEntry] = []
-
+        
         func addEntry(name: String, notes: String, start: Date, end: Date) {
             let newEntry = SleepEntry(name: name, notes: notes, startDate: start, endDate: end)
             entries.append(newEntry)
