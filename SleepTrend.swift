@@ -45,6 +45,8 @@ struct SleepTrendView: View {
     var worstNight: SleepData? {
         sleepData.min(by: { $0.hours < $1.hours })
     }
+    
+   
 
     var body: some View {
         ZStack {
