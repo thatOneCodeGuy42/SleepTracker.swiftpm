@@ -46,14 +46,7 @@ struct SleepTrendView: View {
         sleepData.min(by: { $0.hours < $1.hours })
     }
     
-    enum SortingOption {
-        case alphabeticalAZ
-        case alphabeticalZA
-        case dateOldNew
-        case dateNewOld
-        case mostHours
-        case leastHours
-    }
+   
 
     var body: some View {
         ZStack {

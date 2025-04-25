@@ -20,6 +20,15 @@ struct SleepLog: View {
     @StateObject var viewModel = SleepLogViewModel()
     @State var selectedEntry: SleepEntry?
     @State var showPopup = false
+    
+    enum SortingOption {
+        case alphabeticalAZ
+        case alphabeticalZA
+        case dateOldNew
+        case dateNewOld
+        case mostHours
+        case leastHours
+    }
 
     var body: some View {
         NavigationView {
