@@ -16,18 +16,29 @@ struct SleepData: Identifiable {
 
 struct SleepTrendView: View {
     @Environment(\.dismiss) var dismiss
-
-    @State var sleepData: [SleepData] = [
-        SleepData(day: "Mon", hours: 6),
-        SleepData(day: "Tue", hours: 7.5),
-        SleepData(day: "Wed", hours: 5),
-        SleepData(day: "Thu", hours: 8),
-        SleepData(day: "Fri", hours: 4.5),
-        SleepData(day: "Sat", hours: 9),
-        SleepData(day: "Sun", hours: 6.5)
-    ]
-
+    @ObservedObject var sleepLogViewModel: SleepLog.SleepLogViewModel
     @State var showInfo = false
+
+    var sleepData: [SleepData] {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone.current
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEE" // Short weekday name
+
+        var dailySleep: [String: Double] = [:]
+
+        for entry in sleepLogViewModel.entries {
+            let duration = entry.endDate.timeIntervalSince(entry.startDate)
+            let hoursSlept = duration / 3600
+            let weekday = dateFormatter.string(from: entry.startDate)
+            dailySleep[weekday, default: 0] += hoursSlept
+        }
+
+        let orderedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+        return orderedDays.map { day in
+            SleepData(day: day, hours: dailySleep[day] ?? 0)
+        }
+    }
 
     var averageSleep: Double {
         guard !sleepData.isEmpty else { return 0 }
@@ -45,8 +56,7 @@ struct SleepTrendView: View {
     var worstNight: SleepData? {
         sleepData.min(by: { $0.hours < $1.hours })
     }
-    
-   
+
 
     var body: some View {
         ZStack {
@@ -63,7 +73,7 @@ struct SleepTrendView: View {
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 60, trailing: 0))
-                    
+
                     Chart {
                         ForEach(sleepData) { data in
                             BarMark(
@@ -147,5 +157,3 @@ struct SleepTrendView: View {
         .animation(.easeInOut, value: showInfo)
     }
 }
-
-

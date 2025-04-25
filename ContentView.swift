@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var sleepLogViewModel = SleepLog.SleepLogViewModel()
     var body: some View {
         NavigationStack {
             ZStack {
@@ -16,7 +17,7 @@ struct ContentView: View {
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
                         .padding(EdgeInsets(top: 0, leading: 0, bottom: 300, trailing: 0))
-                    NavigationLink(destination: SleepLog()) {
+                    NavigationLink(destination: SleepLog(viewModel: sleepLogViewModel)) { // Pass the ViewModel
                         RoundedRectangle(cornerRadius: 15)
                             .frame(width: 225, height: 50)
                             .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
@@ -27,7 +28,7 @@ struct ContentView: View {
                             }
                     }
                     .padding(EdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 0))
-                    NavigationLink(destination: SleepTrendView()) {
+                    NavigationLink(destination: SleepTrendView(sleepLogViewModel: sleepLogViewModel)) { // Pass the ViewModel
                         RoundedRectangle(cornerRadius: 15)
                             .frame(width: 225, height: 50)
                             .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
