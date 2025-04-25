@@ -5,14 +5,18 @@ struct CombinedSleepTrackerView: View {
     @ObservedObject var viewModel: SleepLog.SleepLogViewModel
 
     @State var nameInput = ""
+    @AppStorage("nameOfSleep") var nameInputPersist = ""
     @State var notesInput = ""
+    @AppStorage("notesOfSleep") var notesInputPersist = ""
     @State var showStartPicker = false
     @State var showEndPicker = false
     @State var navigate = false
     @State var showDatePicker = false
     @Environment(\.presentationMode) var presentationMode
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+    @AppStorage("startTime") var startTime = ""
     @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+    @AppStorage("endTime") var endTime = ""
     @State var selectedDate: Date = Date()
 
     let timeFormatter: DateFormatter = {
@@ -30,7 +34,7 @@ struct CombinedSleepTrackerView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text("Enter Sleep Info")
                         .font(.title2)
                         .bold()
@@ -108,6 +112,7 @@ struct CombinedSleepTrackerView: View {
 
                     HStack(spacing: 16) {
                         Button("Delete") {
+                            
                             clearInputs()
                             self.presentationMode.wrappedValue.dismiss()
                         }
@@ -118,7 +123,10 @@ struct CombinedSleepTrackerView: View {
                         .cornerRadius(10)
                         Button("Confirm") {
                             viewModel.addEntry(name: nameInput, notes: notesInput, start: startDate, end: endDate)
-
+                            UserDefaults.standard.set(nameInput, forKey: "nameOfSleep")
+                            UserDefaults.standard.set(notesInput, forKey: "notesOfSleep")
+                            UserDefaults.standard.set(startDate, forKey: "startTime")
+                            UserDefaults.standard.set(endDate, forKey: "endTime")
                             clearInputs()
                             self.presentationMode.wrappedValue.dismiss()
                         }
@@ -127,6 +135,11 @@ struct CombinedSleepTrackerView: View {
                         .background(Color.blue)
                         .foregroundColor(.white)
                         .cornerRadius(10)
+                        .onSubmit {
+                            if let retrived = UserDefaults.standard.string(forKey: "nameOfSleep") {
+                                nameInputPersist = retrived
+                            }
+                        }
                         
                     }
 
@@ -135,15 +148,15 @@ struct CombinedSleepTrackerView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Previous Entry Summary")
                             .font(.headline)
-                        Text("🛏️ Name: —")
-                        Text("🌙 Start Time: —")
-                        Text("☀️ End Time: —")
-                        Text("📝 Notes: —")
+                        Text("🛏️ Name: \(nameInputPersist)")
+                        Text("🌙 Start Time: \(startTime)")
+                        Text("☀️ End Time: \(endTime)")
+                        Text("📝 Notes: \(notesInputPersist)")
                     }
                     .padding()
                     .background(Color.gray.opacity(0.1))
                     .cornerRadius(12)
-
+                    Spacer()
                     Spacer()
                 }
                 .padding()
