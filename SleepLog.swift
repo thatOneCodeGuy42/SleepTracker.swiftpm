@@ -17,6 +17,7 @@ struct SleepEntry: Identifiable {
 }
 
 struct SleepLog: View {
+//    @Published var entries: [SleepEntry] = []
     @StateObject var viewModel = SleepLogViewModel()
     @State var selectedEntry: SleepEntry?
     @State var showPopup = false
@@ -151,3 +152,5 @@ struct SleepLog: View {
         }
     }
 }
+
+

@@ -1,16 +1,9 @@
-//
-//  SleepTrend.swift
-//  SleepTracker
-//
-//  Created by Abhi Sorathiya on 4/14/25.
-//
-
 import SwiftUI
 import Charts
 
 struct SleepData: Identifiable {
     let id = UUID()
-    let day: String
+    let date: Date
     let hours: Double
 }
 
@@ -18,46 +11,35 @@ struct SleepTrendView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var sleepLogViewModel: SleepLog.SleepLogViewModel
     @State var showInfo = false
-
+    @State var animateChart = false
+    
     var sleepData: [SleepData] {
-        var calendar = Calendar.current
-        calendar.timeZone = TimeZone.current
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "EEE" // Short weekday name
-
-        var dailySleep: [String: Double] = [:]
-
-        for entry in sleepLogViewModel.entries {
+        let sortedEntries = sleepLogViewModel.entries.sorted { $0.startDate > $1.startDate }
+        let latestEntries = Array(sortedEntries.prefix(7))
+        return latestEntries.map { entry in
             let duration = entry.endDate.timeIntervalSince(entry.startDate)
             let hoursSlept = duration / 3600
-            let weekday = dateFormatter.string(from: entry.startDate)
-            dailySleep[weekday, default: 0] += hoursSlept
-        }
-
-        let orderedDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-        return orderedDays.map { day in
-            SleepData(day: day, hours: dailySleep[day] ?? 0)
-        }
+            return SleepData(date: entry.startDate, hours: hoursSlept)
+        }.sorted { $0.date < $1.date }
     }
-
+    
     var averageSleep: Double {
         guard !sleepData.isEmpty else { return 0 }
         return sleepData.map { $0.hours }.reduce(0, +) / Double(sleepData.count)
     }
-
+    
     var totalSleep: Double {
         sleepData.map { $0.hours }.reduce(0, +)
     }
-
+    
     var bestNight: SleepData? {
         sleepData.max(by: { $0.hours < $1.hours })
     }
-
+    
     var worstNight: SleepData? {
         sleepData.min(by: { $0.hours < $1.hours })
     }
-
-
+    
     var body: some View {
         ZStack {
             Color(red: 0.051, green: 0.106, blue: 0.165)
@@ -72,17 +54,19 @@ struct SleepTrendView: View {
                                 .font(.custom("American Typewriter", size: 50))
                                 .foregroundStyle(Color(red: 0.918, green: 0.918, blue: 0.918))
                         }
-                        .padding(EdgeInsets(top: 0, leading: 0, bottom: 60, trailing: 0))
-
+                        .padding(.bottom, 60)
+                    
                     Chart {
-                        ForEach(sleepData) { data in
+                        ForEach(Array(sleepData.enumerated()), id: \.1.id) { index, data in
+                            let displayIndex = sleepData.count - index
                             BarMark(
-                                x: .value("Day", data.day),
-                                y: .value("Hours", data.hours)
+                                x: .value("Entry", "\(displayIndex)"),
+                                y: .value("Hours", animateChart ? data.hours : 0)
                             )
                             .foregroundStyle(Gradient(colors: [.purple.opacity(0.4), .purple]))
+//                            .animation(.easeOut(duration: 0.6), value: animateChart)
                         }
-
+                        
                         RuleMark(y: .value("Ideal", 8))
                             .lineStyle(StrokeStyle(lineWidth: 1, dash: [5]))
                             .foregroundStyle(.red)
@@ -94,7 +78,12 @@ struct SleepTrendView: View {
                     }
                     .frame(height: 300)
                     .padding()
-
+                    .onAppear {
+                        withAnimation {
+                            animateChart = true
+                        }
+                    }
+                    
                     Button {
                         showInfo = true
                     } label: {
@@ -106,46 +95,45 @@ struct SleepTrendView: View {
                                     .foregroundStyle(Color(red: 0.788, green: 0.839, blue: 0.875))
                             }
                     }
-                    .padding(EdgeInsets(top: 100, leading: 0, bottom: 0, trailing: 0))
-
+                    .padding(.top, 100)
                 }
                 .padding()
             }
-
+            
             if showInfo {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                     .onTapGesture {}
+                
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Sleep Summary")
                         .font(.headline)
-
+                    
                     Text(String(format: "🛏 Total Sleep: %.1f hours", totalSleep))
                     Text(String(format: "📊 Average: %.1f hrs/night", averageSleep))
-
+                    
                     if let best = bestNight {
-                        Text("🌟 Best Night: \(best.day) – \(String(format: "%.1f", best.hours)) hrs")
+                        Text("🌟 Best Night: \(formattedDate(best.date)) – \(String(format: "%.1f", best.hours)) hrs")
                     }
-
+                    
                     if let worst = worstNight {
-                        Text("😴 Worst Night: \(worst.day) – \(String(format: "%.1f", worst.hours)) hrs")
+                        Text("😴 Worst Night: \(formattedDate(worst.date)) – \(String(format: "%.1f", worst.hours)) hrs")
                     }
-
+                    
                     Text("🔴 The red dashed line on the chart shows the ideal goal of 8 hours of sleep.")
-
+                    
                     Button {
                         showInfo = false
                     } label: {
                         RoundedRectangle(cornerRadius: 5)
                             .frame(width: 65, height: 30)
                             .foregroundStyle(Color(red: 0.424, green: 0.478, blue: 0.537))
-                            .padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
                             .overlay {
                                 Text("Close")
                                     .foregroundStyle(Color(red: 0.788, green: 0.839, blue: 0.875))
-                                    .padding(EdgeInsets(top: 0, leading: 90, bottom: 0, trailing: 0))
                             }
                     }
+                    .padding(.top, 10)
                 }
                 .padding()
                 .frame(maxWidth: 300)
@@ -156,4 +144,11 @@ struct SleepTrendView: View {
         }
         .animation(.easeInOut, value: showInfo)
     }
+    
+    func formattedDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM d"
+        return formatter.string(from: date)
+    }
 }
+
