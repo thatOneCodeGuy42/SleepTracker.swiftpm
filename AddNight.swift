@@ -1,9 +1,8 @@
 import SwiftUI
 
 struct CombinedSleepTrackerView: View {
-    
     @ObservedObject var viewModel: SleepLog.SleepLogViewModel
-
+    
     @State var nameInput = ""
     @AppStorage("nameOfSleep") var nameInputPersist = ""
     @State var notesInput = ""
@@ -12,139 +11,145 @@ struct CombinedSleepTrackerView: View {
     @State var showEndPicker = false
     @State var navigate = false
     @State var showDatePicker = false
+    @State var selectedQuality = "😴"
     @Environment(\.presentationMode) var presentationMode
+    
+    @FocusState var focusedField: Bool
+    
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @AppStorage("startTime") var startTime = ""
     @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
     @AppStorage("endTime") var endTime = ""
     @State var selectedDate: Date = Date()
-
+    @State var animateConfirm: Bool = false
+    @State var showConfetti: Bool = false
+    
     let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "h:mm a"
         return formatter
     }()
-
+    
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         return formatter
     }()
-
+    
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 16) {
                     Text("Enter Sleep Info")
-                        .font(.title2)
-                        .bold()
+                        .font(.largeTitle.bold())
                         .padding(.top)
-
-                    HStack {
-                        Image(systemName: "person.fill")
-                        TextField("Name", text: $nameInput)
-                    }
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                    HStack {
-                        Image(systemName: "calendar")
-                        Button(action: { showDatePicker = true }) {
-                            HStack {
-                                Text(dateFormatter.string(from: selectedDate))
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Image(systemName: "chevron.down")
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .transition(.move(edge: .top))
+                    
+                    Group {
+                        HStack {
+                            Image(systemName: "person.fill")
+                            TextField("Name", text: $nameInput)
+                                .focused($focusedField)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-
-                    HStack {
-                        Image(systemName: "bed.double.fill")
-                        Button(action: { showStartPicker = true }) {
-                            HStack {
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        
+                        HStack {
+                            Image(systemName: "calendar")
+                            Button(action: { showDatePicker = true }) {
+                                HStack {
+                                    Text(dateFormatter.string(from: selectedDate))
+                                        .foregroundColor(.primary)
+                                    Spacer()
+                                    Image(systemName: "chevron.down")
+                                }
+                                .padding()
+                                .background(.ultraThinMaterial)
+                                .cornerRadius(10)
+                            }
+                        }
+                        
+                        HStack {
+                            Image(systemName: "bed.double.fill")
+                            Button(action: { showStartPicker = true }) {
                                 Text(timeFormatter.string(from: startDate))
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Image(systemName: "chevron.down")
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(.ultraThinMaterial)
+                                    .cornerRadius(10)
                             }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
                         }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-
-                    HStack {
-                        Image(systemName: "alarm.fill")
-                        Button(action: { showEndPicker = true }) {
-                            HStack {
+                        
+                        HStack {
+                            Image(systemName: "alarm.fill")
+                            Button(action: { showEndPicker = true }) {
                                 Text(timeFormatter.string(from: endDate))
-                                    .foregroundColor(.primary)
-                                Spacer()
-                                Image(systemName: "chevron.down")
-                                    .foregroundColor(.gray)
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(.ultraThinMaterial)
+                                    .cornerRadius(10)
                             }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
                         }
-                        .buttonStyle(PlainButtonStyle())
+                        
+                        HStack {
+                            Image(systemName: "note.text")
+                            TextField("Notes (optional)", text: $notesInput)
+                                .focused($focusedField)
+                        }
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        
+                        HStack {
+                            Image(systemName: "face.smiling")
+                            Picker("Mood", selection: $selectedQuality) {
+                                Text("😴").tag("😴")
+                                Text("😊").tag("😊")
+                                Text("😫").tag("😫")
+                                Text("😡").tag("😡")
+                            }
+                            .pickerStyle(.segmented)
+                        }
                     }
-
-                    HStack {
-                        Image(systemName: "note.text")
-                        TextField("Notes (optional)", text: $notesInput)
-                    }
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                    Text("Tip: Tap the time fields to select times")
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-
+                    .transition(.move(edge: .leading))
+                    
                     HStack(spacing: 16) {
                         Button("Delete") {
-                            
                             clearInputs()
-                            self.presentationMode.wrappedValue.dismiss()
+                            presentationMode.wrappedValue.dismiss()
                         }
                         .frame(maxWidth: .infinity)
                         .padding()
                         .background(Color.red.opacity(0.8))
                         .foregroundColor(.white)
-                        .cornerRadius(10)
-                        Button("Confirm") {
-                            viewModel.addEntry(name: nameInput, notes: notesInput, start: startDate, end: endDate)
-                            UserDefaults.standard.set(nameInput, forKey: "nameOfSleep")
-                            UserDefaults.standard.set(notesInput, forKey: "notesOfSleep")
-                            UserDefaults.standard.set(startDate, forKey: "startTime")
-                            UserDefaults.standard.set(endDate, forKey: "endTime")
-                            clearInputs()
-                            self.presentationMode.wrappedValue.dismiss()
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                        .onSubmit {
-                            if let retrived = UserDefaults.standard.string(forKey: "nameOfSleep") {
-                                nameInputPersist = retrived
-                            }
-                        }
+                        .cornerRadius(12)
+                        .scaleEffect(animateConfirm ? 1.05 : 1)
+                        .animation(.easeInOut, value: animateConfirm)
                         
+                        Button(action: confirmSave) {
+                            Text("Confirm")
+                                .bold()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(nameInput.isEmpty ? Color.gray : Color.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(12)
+                                .scaleEffect(animateConfirm ? 1.05 : 1)
+                        }
+                        .disabled(nameInput.isEmpty)
+                        .animation(.easeInOut, value: nameInput)
                     }
-
-                    Divider().padding(.vertical)
-
+                    .padding(.top)
+                    
+                    if showConfetti {
+                        Text("🎉 Saved!")
+                            .font(.title2.bold())
+                            .foregroundColor(.green)
+                            .transition(.scale)
+                            .padding(.top, 10)
+                    }
+                    
+                    Divider()
+                        .padding(.vertical)
+                    
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Previous Entry Summary")
                             .font(.headline)
@@ -152,86 +157,99 @@ struct CombinedSleepTrackerView: View {
                         Text("🌙 Start Time: \(startTime)")
                         Text("☀️ End Time: \(endTime)")
                         Text("📝 Notes: \(notesInputPersist)")
+                        Text("🌟 Quality: \(selectedQuality)")
                     }
                     .padding()
-                    .background(Color.gray.opacity(0.1))
+                    .background(.ultraThinMaterial)
                     .cornerRadius(12)
-                    Spacer()
+                    .transition(.opacity)
+                    
                     Spacer()
                 }
                 .padding()
-                .navigationTitle("Sleep Tracker")
             }
-            .sheet(isPresented: $showDatePicker) {
-                VStack(spacing: 0) {
-                    HStack {
-                        Spacer()
-                        Button("Done") { showDatePicker = false }
-                            .padding()
-                    }
-                    DatePicker(
-                        "Select Date",
-                        selection: $selectedDate,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                    .frame(maxHeight: 200)
-                    Spacer()
-                }
-                .presentationDetents([.height(300)])
-            }
-            .sheet(isPresented: $showStartPicker) {
-                VStack(spacing: 0) {
-                    HStack {
-                        Spacer()
-                        Button("Done") { showStartPicker = false }
-                            .padding()
-                    }
-                    DatePicker(
-                        "Start Time",
-                        selection: $startDate,
-                        displayedComponents: .hourAndMinute
-                    )
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                    .frame(maxHeight: 200)
-                    Spacer()
-                }
-                .presentationDetents([.height(300)])
-            }
-            .sheet(isPresented: $showEndPicker) {
-                VStack(spacing: 0) {
-                    HStack {
-                        Spacer()
-                        Button("Done") { showEndPicker = false }
-                            .padding()
-                    }
-                    DatePicker(
-                        "End Time",
-                        selection: $endDate,
-                        displayedComponents: .hourAndMinute
-                    )
-                    .datePickerStyle(.wheel)
-                    .labelsHidden()
-                    .frame(maxHeight: 200)
-                    Spacer()
-                }
-                .presentationDetents([.height(300)])
-            }
+            .navigationTitle("Sleep Tracker")
+            .background(Color(.systemGroupedBackground))
+            .onTapGesture { focusedField = false }
+            .sheet(isPresented: $showDatePicker) { dateSheet }
+            .sheet(isPresented: $showStartPicker) { startSheet }
+            .sheet(isPresented: $showEndPicker) { endSheet }
         }
     }
-
+    
+     var dateSheet: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Done") { showDatePicker = false }
+                    .padding()
+            }
+            DatePicker("", selection: $selectedDate, displayedComponents: .date)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .padding()
+        }
+        .presentationDetents([.height(300)])
+    }
+    
+     var startSheet: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Done") { showStartPicker = false }
+                    .padding()
+            }
+            DatePicker("", selection: $startDate, displayedComponents: .hourAndMinute)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .padding()
+        }
+        .presentationDetents([.height(300)])
+    }
+    
+     var endSheet: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Done") { showEndPicker = false }
+                    .padding()
+            }
+            DatePicker("", selection: $endDate, displayedComponents: .hourAndMinute)
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .padding()
+        }
+        .presentationDetents([.height(300)])
+    }
+    
+    func confirmSave() {
+        guard !nameInput.isEmpty else { return }
+        viewModel.addEntry(name: nameInput, notes: notesInput, start: startDate, end: endDate)
+        UserDefaults.standard.set(nameInput, forKey: "nameOfSleep")
+        UserDefaults.standard.set(notesInput, forKey: "notesOfSleep")
+        UserDefaults.standard.set(startDate, forKey: "startTime")
+        UserDefaults.standard.set(endDate, forKey: "endTime")
+        clearInputs()
+        animateConfirm.toggle()
+        showConfetti = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            showConfetti = false
+            presentationMode.wrappedValue.dismiss()
+        }
+    }
+    
     func clearInputs() {
         nameInput = ""
         notesInput = ""
         selectedDate = Date()
-        if let startOfDay = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date()) {
-            startDate = startOfDay
-        }
-        if let noon = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date()) {
-            endDate = noon
-        }
+        startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+        endDate = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
     }
 }
 
