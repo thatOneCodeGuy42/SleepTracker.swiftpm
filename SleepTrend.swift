@@ -18,7 +18,7 @@ struct SleepTrendView: View {
         let latestEntries = Array(sortedEntries.prefix(7))
         return latestEntries.map { entry in
             let duration = entry.endDate.timeIntervalSince(entry.startDate)
-            let hoursSlept = duration / 3600
+            let hoursSlept = abs(duration / 3600)
             return SleepData(date: entry.startDate, hours: hoursSlept)
         }.sorted { $0.date < $1.date }
     }
