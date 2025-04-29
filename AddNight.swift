@@ -20,7 +20,7 @@ struct CombinedSleepTrackerView: View {
     
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @AppStorage("startTime") var startTime = ""
-    @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+    @State var endDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @AppStorage("endTime") var endTime = ""
     @State var selectedDate: Date = Date()
     @State var animateConfirm: Bool = false
