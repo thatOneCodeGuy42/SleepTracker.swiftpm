@@ -147,10 +147,17 @@ struct SleepLog: View {
         @Published var entries: [SleepEntry] = []
 
         func addEntry(name: String, notes: String, start: Date, end: Date) {
-            let newEntry = SleepEntry(name: name, notes: notes, startDate: start, endDate: end)
+            var correctedEnd = end
+            if end <= start {
+                correctedEnd = Calendar.current.date(byAdding: .day, value: 1, to: end)!
+            }
+            let newEntry = SleepEntry(name: name, notes: notes, startDate: start, endDate: correctedEnd)
             entries.append(newEntry)
+            let duration = correctedEnd.timeIntervalSince(start) / 3600
+            print("Added entry '\(name)': \(String(format: "%.1f", duration)) hours")
         }
     }
+
 }
 
 
