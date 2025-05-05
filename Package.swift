@@ -17,6 +17,7 @@ let package = Package(
             name: "SleepTracker",
             targets: ["AppModule"],
             bundleIdentifier: "jhhs.627201.SleepTracker",
+            teamIdentifier: "D95P6B5946",
             displayVersion: "1.0",
             bundleVersion: "1",
             appIcon: .placeholder(icon: .sandwich),
