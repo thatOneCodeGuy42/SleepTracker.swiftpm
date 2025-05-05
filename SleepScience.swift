@@ -5,6 +5,7 @@ struct SleepScience: View {
     let secondURL = "https://www.youtube.com/watch?v=3mufsteNrTI"
     let thirdURL = "https://pmc.ncbi.nlm.nih.gov/articles/PMC6281147/"
     let fourthURL = "https://sleep.hms.harvard.edu/education-training/public-education/sleep-and-health-education-program/sleep-health-education-47"
+    let fifthURL = "https://www.youtube.com/watch?v=pCwlfSTNK3A"
     var body: some View {
         ZStack {
             Color(red: 0.051, green: 0.106, blue: 0.165)
@@ -40,6 +41,16 @@ struct SleepScience: View {
                                 .frame(width: 350, height: 50)
                                 .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
                             Text("Why Do We Have To Sleep?")
+                                .font(.custom("American Typewriter", size: 20))
+                                .foregroundStyle(Color.white)
+                        }
+                    })
+                    Link( destination: URL(string: fifthURL)!, label: {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 5)
+                                .frame(width: 350, height: 50)
+                                .foregroundStyle(Color(red: 0.722, green: 0.663, blue: 0.788))
+                            Text("Science of Sleep and Dreams")
                                 .font(.custom("American Typewriter", size: 20))
                                 .foregroundStyle(Color.white)
                         }

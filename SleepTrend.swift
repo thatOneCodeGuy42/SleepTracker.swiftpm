@@ -25,11 +25,23 @@ struct SleepTrendView: View {
         let latestEntries = Array(sortedEntries.prefix(7))
         return latestEntries.map { entry in
             let duration = entry.endDate.timeIntervalSince(entry.startDate)
-            let hoursSlept = duration / 3600
+            let hoursSlept = abs(duration / 3600)
             return SleepData(date: entry.startDate, hours: hoursSlept)
         }.sorted { $0.date < $1.date }
     }
     
+//    private var hoursSlept: Double {
+//        guard let latestEntry = sleepLogViewModel.entries.sorted(by: { $0.startDate > $1.startDate}).first else {
+//            return 0.0
+//        }
+//        let startDate = latestEntry.startDate
+//        let endDate = latestEntry.endDate
+//        let elapsedTime = timeFromMidnight(time: endDate)
+//        let remainingTime = timeUntilMidnight(time: startDate)
+//        let totalTime = elapsedTime + remainingTime
+//        return totalTime
+//    }
+//    
     var averageSleep: Double {
         guard !sleepData.isEmpty else { return 0 }
         return sleepData.map { $0.hours }.reduce(0, +) / Double(sleepData.count)
@@ -66,8 +78,12 @@ struct SleepTrendView: View {
                     Chart {
                         ForEach(Array(sleepData.enumerated()), id: \.1.id) { index, data in
                             let displayIndex = sleepData.count - index
+//                            let totalTimeSlept = hoursSlept
                             BarMark(
                                 x: .value("Entry", "\(displayIndex)"),
+//                                if data.hours > 12 {
+//                                    data.hours = totalTimeSlept
+//                                },
                                 y: .value("Hours", animateChart ? data.hours : 0)
                             )
                             .foregroundStyle(Gradient(colors: [.purple.opacity(0.4), .purple]))
@@ -157,6 +173,27 @@ struct SleepTrendView: View {
         formatter.dateFormat = "MMM d"
         return formatter.string(from: date)
     }
+//    
+//    func timeFromMidnight(time: Date) -> Double {
+//        let calendar = Calendar.current
+//        let midnight = calendar.startOfDay(for: Date())
+//        let components = calendar.dateComponents([.hour, .minute, .second], from: midnight, to: time)
+//        guard let hours = components.hour, let minutes = components.minute, let seconds = components.second else {
+//            return 0
+//        }
+//        return Double(hours) + Double(minutes) / 60.0 + Double(seconds) / 3600.0
+//    }
+//    
+//    func timeUntilMidnight(time: Date) -> Double {
+//        let calendar = Calendar.current
+//        let midnight = calendar.startOfDay(for: Date())
+//        let components = calendar.dateComponents([.hour, .minute, .second], from: midnight, to: midnight.addingTimeInterval(24 * 60 * 60))
+//        guard let hours = components.hour, let minutes = components.minute, let seconds = components.second else {
+//            return 0
+//        }
+//        return Double(hours) + Double(minutes) / 60.0 + Double(seconds) / 3600.0
+//    }
+//    
 }
 
 

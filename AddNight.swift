@@ -15,7 +15,9 @@ struct CombinedSleepTrackerView: View {
     @State var notesInput = ""
     @AppStorage("notesOfSleep") var notesInputPersist = ""
     @State var showStartPicker = false
+    @AppStorage("startDateTime") var startDatePersist = ""
     @State var showEndPicker = false
+    @AppStorage("endDateTime") var endDatePersist = ""
     @State var navigate = false
     @State var showDatePicker = false
     @State var selectedQuality = "😴"
@@ -25,7 +27,7 @@ struct CombinedSleepTrackerView: View {
     
     @State var startDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @AppStorage("startTime") var startTime = ""
-    @State var endDate: Date = Calendar.current.date(bySettingHour: 12, minute: 0, second: 0, of: Date())!
+    @State var endDate: Date = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     @AppStorage("endTime") var endTime = ""
     @State var selectedDate: Date = Date()
     @State var animateConfirm: Bool = false
@@ -161,8 +163,8 @@ struct CombinedSleepTrackerView: View {
                         Text("Previous Entry Summary")
                             .font(.headline)
                         Text("🛏️ Name: \(nameInputPersist)")
-                        Text("🌙 Start Time: \(startTime)")
-                        Text("☀️ End Time: \(endTime)")
+                        Text("🌙 Start Time: \(startDatePersist)")
+                        Text("☀️ End Time: \(endDatePersist)")
                         Text("📝 Notes: \(notesInputPersist)")
                         Text("🌟 Quality: \(selectedQuality)")
                     }
@@ -240,8 +242,10 @@ struct CombinedSleepTrackerView: View {
         viewModel.addEntry(name: nameInput, notes: notesInput, start: startDate, end: endDate)
         UserDefaults.standard.set(nameInput, forKey: "nameOfSleep")
         UserDefaults.standard.set(notesInput, forKey: "notesOfSleep")
-        UserDefaults.standard.set(startDate, forKey: "startTime")
-        UserDefaults.standard.set(endDate, forKey: "endTime")
+        let formatter = DateFormatter()
+        formatter.dateFormat = "hh.mm.a"
+        startDatePersist =  formatter.string(from: startDate)
+        endDatePersist =  formatter.string(from: endDate)
         clearInputs()
         animateConfirm.toggle()
         showConfetti = true
